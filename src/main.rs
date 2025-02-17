@@ -4,6 +4,9 @@ use common_motion_2d_reg::{
 use std::error::Error;
 use tiny_http::{Response, Server};
 
+use std::str::FromStr;
+use tiny_http::{Header, Method};
+
 struct ModelServer {
     inference: CommonMotionInference<Wgpu>,
 }
@@ -20,18 +23,36 @@ impl ModelServer {
         println!("Server running on http://127.0.0.1:8000");
 
         for mut request in server.incoming_requests() {
+            // Handle CORS preflight
+            if request.method() == &Method::Options {
+                let response = Response::empty(204)
+                    .with_header(Header::from_str("Access-Control-Allow-Origin: http://localhost:3000, https://madebycommon.com").unwrap())
+                    .with_header(Header::from_str("Access-Control-Allow-Methods: POST, OPTIONS").unwrap())
+                    .with_header(Header::from_str("Access-Control-Allow-Headers: Content-Type").unwrap());
+                request.respond(response)?;
+                continue;
+            }
+
             match request.method() {
-                tiny_http::Method::Post => {
+                Method::Post => {
                     let mut content = String::new();
                     request.as_reader().read_to_string(&mut content)?;
 
                     let predictions = self.inference.infer(content);
-                    let response = serde_json::to_string(&predictions)?;
+                    let response_content = serde_json::to_string(&predictions)?;
 
-                    request.respond(Response::from_string(response))?;
+                    // Add CORS headers to the actual response
+                    let response = Response::from_string(response_content)
+                        .with_header(Header::from_str("Access-Control-Allow-Origin: http://localhost:3000, https://madebycommon.com").unwrap())
+                        .with_header(Header::from_str("Content-Type: application/json").unwrap());
+
+                    request.respond(response)?;
                 }
                 _ => {
-                    request.respond(Response::from_string("Method not allowed"))?;
+                    let response = Response::from_string("Method not allowed")
+                        .with_status_code(405)
+                        .with_header(Header::from_str("Access-Control-Allow-Origin: http://localhost:3000, https://madebycommon.com").unwrap());
+                    request.respond(response)?;
                 }
             }
         }
