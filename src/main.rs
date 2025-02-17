@@ -25,10 +25,18 @@ impl ModelServer {
         for mut request in server.incoming_requests() {
             // Handle CORS preflight
             if request.method() == &Method::Options {
+                // add https://madebycommon.com for release
                 let response = Response::empty(204)
-                    .with_header(Header::from_str("Access-Control-Allow-Origin: http://localhost:3000, https://madebycommon.com").unwrap())
-                    .with_header(Header::from_str("Access-Control-Allow-Methods: POST, OPTIONS").unwrap())
-                    .with_header(Header::from_str("Access-Control-Allow-Headers: Content-Type").unwrap());
+                    .with_header(
+                        Header::from_str("Access-Control-Allow-Origin: http://localhost:3000")
+                            .unwrap(),
+                    )
+                    .with_header(
+                        Header::from_str("Access-Control-Allow-Methods: POST, OPTIONS").unwrap(),
+                    )
+                    .with_header(
+                        Header::from_str("Access-Control-Allow-Headers: Content-Type").unwrap(),
+                    );
                 request.respond(response)?;
                 continue;
             }
@@ -43,7 +51,10 @@ impl ModelServer {
 
                     // Add CORS headers to the actual response
                     let response = Response::from_string(response_content)
-                        .with_header(Header::from_str("Access-Control-Allow-Origin: http://localhost:3000, https://madebycommon.com").unwrap())
+                        .with_header(
+                            Header::from_str("Access-Control-Allow-Origin: http://localhost:3000")
+                                .unwrap(),
+                        )
                         .with_header(Header::from_str("Content-Type: application/json").unwrap());
 
                     request.respond(response)?;
@@ -51,7 +62,10 @@ impl ModelServer {
                 _ => {
                     let response = Response::from_string("Method not allowed")
                         .with_status_code(405)
-                        .with_header(Header::from_str("Access-Control-Allow-Origin: http://localhost:3000, https://madebycommon.com").unwrap());
+                        .with_header(
+                            Header::from_str("Access-Control-Allow-Origin: http://localhost:3000")
+                                .unwrap(),
+                        );
                     request.respond(response)?;
                 }
             }
