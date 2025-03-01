@@ -796,6 +796,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "common-layout-2d"
+version = "0.1.0"
+dependencies = [
+ "burn",
+ "csv",
+ "derive-new 0.7.0",
+ "itertools 0.14.0",
+ "rand 0.8.5",
+ "rayon",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "common-motion-2d-reg"
 version = "0.1.0"
 dependencies = [
@@ -4127,6 +4141,7 @@ dependencies = [
 name = "stunts-inf-api"
 version = "0.1.0"
 dependencies = [
+ "common-layout-2d",
  "common-motion-2d-reg",
  "serde",
  "serde_json",

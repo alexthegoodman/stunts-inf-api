@@ -6,6 +6,7 @@ edition = "2021"
 [dependencies]
 tiny_http = "0.12.0"
 common-motion-2d-reg = { path = "../common-motion-2d-reg", version = "0.1.0" }
+common-layout-2d = { path = "../common-layout-2d", version = "0.1.0" }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 serde_with = "3.11.0"
