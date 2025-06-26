@@ -23,8 +23,8 @@ impl ModelServer {
     }
 
     fn run(&self) -> Result<(), Box<dyn Error>> {
-        let server = Server::http("127.0.0.1:8000").expect("Couldn't start server");
-        println!("Server running on http://127.0.0.1:8000");
+        let server = Server::http("0.0.0.0:8000").expect("Couldn't start server");
+        println!("Server running on http://0.0.0.0:8000");
 
         for mut request in server.incoming_requests() {
             // Handle CORS preflight
@@ -32,7 +32,7 @@ impl ModelServer {
                 // add https://madebycommon.com for release
                 let response = Response::empty(204)
                     .with_header(
-                        Header::from_str("Access-Control-Allow-Origin: http://localhost:3000")
+                        Header::from_str("Access-Control-Allow-Origin: https://madebycommon.com")
                             .unwrap(),
                     )
                     .with_header(
@@ -78,7 +78,7 @@ impl ModelServer {
                     // Add CORS headers to the actual response
                     let response = Response::from_string(response_content)
                         .with_header(
-                            Header::from_str("Access-Control-Allow-Origin: http://localhost:3000")
+                            Header::from_str("Access-Control-Allow-Origin: https://madebycommon.com")
                                 .unwrap(),
                         )
                         .with_header(Header::from_str("Content-Type: application/json").unwrap());
@@ -89,7 +89,7 @@ impl ModelServer {
                     let response = Response::from_string("Method not allowed")
                         .with_status_code(405)
                         .with_header(
-                            Header::from_str("Access-Control-Allow-Origin: http://localhost:3000")
+                            Header::from_str("Access-Control-Allow-Origin: https://madebycommon.com")
                                 .unwrap(),
                         );
                     request.respond(response)?;
